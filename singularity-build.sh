@@ -10,12 +10,10 @@ apt-get -y install git \
 
 # so that adjusted PATH propagates into sudo
 sed -i -e 's/^Defaults\tsecure_path.*$//' /etc/sudoers
-export CXX=g++
-export CC=gcc
 
 # Install Singularity from Github
 cd /tmp && git clone http://www.github.com/singularityware/singularity 
-cd singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
+cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 
 # Pip3 installs
 pip3 install --upgrade pip &&
