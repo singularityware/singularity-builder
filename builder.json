@@ -8,7 +8,7 @@
     "project_id": "srcc-gcp-ruth-will-phs-testing",
     "instance_name": "singularity-builder-latest",
     "image_name": "singularity-builder-latest",
-    "source_image": "ubuntu-1604-xenial-v20160627",
+    "source_image": "ubuntu-1610-yakkety-v20161205",
     "ssh_username": "ubuntu",
     "startup_script_file":"singularity-build-latest.sh",
     "zone": "us-west1-a"
