@@ -1,16 +1,20 @@
 #!/bin/sh
-sudo apt-get update &&
+sudo apt-get update > /tmp/.install-log
 sudo apt-get -y install git \
                         build-essential \
                         libtool \
                         autotools-dev \
                         automake \
                         autoconf \
-                        python3-pip
+                        python3-pip >> /tmp/.install-log
+
+# so that adjusted PATH propagates into sudo
+sudo sed -i -e 's/^Defaults\tsecure_path.*$//' /etc/sudoers
+export CXX=g++
+export CC=gcc
 
 # Install Singularity from Github
-cd /tmp && git clone http://www.github.com/singularityware/singularity &&
-   cd singularity && ./configure --prefix=/usr/local && make && sudo make install
+cd /tmp && git clone http://www.github.com/singularityware/singularity && cd singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && sudo make install > /tmp/.singularity-install.log
 
 # Pip3 installs
 sudo pip3 install --upgrade pip &&
