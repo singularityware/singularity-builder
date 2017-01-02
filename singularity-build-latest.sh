@@ -1,4 +1,7 @@
 #!/bin/sh
+source $HOME/.profile
+source $HOME/.bashrc
+
 sudo apt-get update > /tmp/.install-log
 sudo apt-get -y install git \
                    build-essential \
@@ -8,8 +11,6 @@ sudo apt-get -y install git \
                    autoconf \
                    python3-pip >> /tmp/.install-log
 
-# so that adjusted PATH propagates into sudo
-sed -i -e 's/^Defaults\tsecure_path.*$//' /etc/sudoers
 
 # Install Singularity from Github
 cd /tmp && git clone http://www.github.com/singularityware/singularity 
