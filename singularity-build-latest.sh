@@ -8,11 +8,8 @@ sudo apt-get -y install git \
                    autoconf \
                    python3-pip >> /tmp/.install-log
 
-source $HOME/.profile
-source $HOME/.bashrc
-
 # Install Singularity from Github
-cd /tmp && git clone http://www.github.com/singularityware/singularity 
+cd /tmp && git clone http://www.github.com/vsoch/singularity 
 cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && sudo make install
 
 # Pip3 installs

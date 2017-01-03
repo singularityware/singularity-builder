@@ -6,8 +6,8 @@
   "builders": [{
     "type": "googlecompute",
     "project_id": "srcc-gcp-ruth-will-phs-testing",
-    "instance_name": "singularity-builder-latest-{{timestamp}}",
-    "image_name": "singularity-builder-latest",
+    "instance_name": "singularity-builder-testing-{{timestamp}}",
+    "image_name": "singularity-builder-testing",
     "source_image": "ubuntu-1604-xenial-v20160627",
     "ssh_username": "ubuntu",
     "startup_script_file":"singularity-build-latest.sh",
