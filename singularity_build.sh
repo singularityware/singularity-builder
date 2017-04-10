@@ -39,7 +39,7 @@ case "$arg" in
                    	build-essential \
                    	libtool \
                    	autotools-dev \
-                   	automake \
+                   	automake make \
                    	autoconf \
                    	debootstrap \
                    	python3-pip >> /tmp/.install-log
