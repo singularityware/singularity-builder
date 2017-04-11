@@ -2,8 +2,7 @@
 #Singularity Builder
 #Singularity: Application containers for Linux http://singularity.lbl.gov/
 
-if [ "$#" -lt 1 ];
-then
+Shelp (){
 echo "Singularity Builder: build, install, and update Singularity software. 
 Support for Debian/Ubuntu, Centos/Fedora
 
@@ -25,24 +24,29 @@ Examples:
   # Install dependencies, setup, build + install
   sudo ./singularity_build.sh all
 
-  # Install dependencies, build + optional prefix
+  # Build + optional prefix
   sudo ./singularity_build.sh build --prefix=/my/path
  
-  # If you already have dependencies, just install
+  # If you already have the needed dependencies, just install
   sudo ./singularity_build.sh install
 
-  # Update an installation
+  # Update to the latest release
   sudo ./singularity_build.sh update
 
 Singularity: Application containers for Linux
 For additional help, see http://singularity.lbl.gov/"
 exit 1
+}
+if [ "$#" -lt 1 ];
+then
+Shelp
 fi
 
 setup () {
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 	if [ -f /etc/debian_version ]; then
     	apt-get update > /tmp/.install-log
+	apt-get install -y apt-utils >> /tmp/.install-log
 	apt-get -y install git \
                    build-essential \
                    libtool \
@@ -89,111 +93,138 @@ rm -rf $1/var/lib/singularity/
 rm $1/bin/singularity
 rm $1/bin/run-singularity
 rm $1/etc/bash_completion.d/singularity 
-rm $1/man/man1/singularity.1
 }
 
-Sinstall () {
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
-	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install 
-}
-
-
-devel_Sinstall () {
+Sclone () {
+	if [ "$1" == "devel" ]; 
+	then 
 	cd /tmp && git clone -b development http://www.github.com/singularityware/singularity 
-	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install
+	else	
+	cd /tmp && git clone http://www.github.com/singularityware/singularity
+	fi
+}
+Smake () {
+	if [ $1 ];
+	then
+	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make 
+	else 
+	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make 
+	fi
 }
 
-for arg in $@
-do
-case "$arg" in
+Sinstall () { 
+	if [ $1 ];
+	then
+	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install 
+	else 
+	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install 
+	fi
+}
+
+while true; do
+case ${1:-} in
+	-h|--help|help)
+	Shelp
+	exit
+	;;
+# Install dependencies for your distribution [sudo]
 	"setup")
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else
 	setup
 	fi
+	break
 	;;
 	"build")
-# Build configure and make the installation, with optional --prefix
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
-	if [ $2 ];
-	then	
-	cd /tmp/singularity && ./autogen.sh && ./configure $2 && make
-	else	
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make
-	fi	
+# Build configure and make the installation, with optional --prefix 
+	Sclone	
+	shift
+	if [ $1 ]; then
+	Smake $1
+	else
+	Smake
+	fi
 	;;
 	"build-devel")
 # Build configure and make the installation, with optional --prefix
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
-	if [ $2 ];
-	then	
-	cd /tmp/singularity && ./autogen.sh && ./configure $2 && make
-	else	
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make
-	fi	
+	Sclone devel
+	shift
+	if [ $1 ]; then
+	Smake $1
+	else
+	Smake
+	fi
 	;;
 	"install")	
 # Install Singularity from Github
+	shift
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else
-		if [ $2 ];
+		if [ $1 ];
 		then	
-		Sinstall $2
+		Sinstall $1
 		else	
-		Sinstall --prefix=/usr/local
+		Sinstall
 		fi		
 	echo "Singularity successfully installed"
 	fi
 	;;
 	"update")
 # Update Singularity from Github
+	shift
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else
-		if [ $2 ];
+		if [ $1 ];
 		then
-		remove $2
-		Sinstall $2
+		remove $1
+		Sinstall $1
 		else
 		remove /usr/local
-		Sinstall --prefix=/usr/local
+		Sinstall
 		fi
 	echo "Singularity successfully installed"
 	fi
 	;;
 	"install-devel")	
 # Install Singularity-Development branch from Github
+	shift	
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else	
-		if [ $2 ];
-		then	
-		devel_Sinstall $2
+		if [ $1 ];
+		then
+		Sclone	devel
+		Sinstall $1
 		else
-		devel_Sinstall --prefix=/usr/local
+		Sclone
+		Sinstall
 		fi
 	echo "Singularity successfully installed"
 	fi	
 	;;
 	"update-devel")
 # Update Singularity-Development branch from Github
+	shift	
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else
-		if [ $2 ];
+		if [ $1 ];
 		then
-		remove $2
-		devel_Sinstall $2
+		remove $1
+		Sclone devel
+		Sinstall $1
 		else
 		remove /usr/local
-		devel_Sinstall --prefix=/usr/local		
+		Sclone
+		Sinstall	
 		fi
 	echo "Singularity successfully installed"
 	fi
@@ -201,34 +232,46 @@ case "$arg" in
 	"all")
 # All setup, build, and install [sudo]
 	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
+	echo "Please run as root.[sudo]"
 	exit 1
 	else	
 	setup
-		if [ $2 ];
+	Sclone
+		if [ $1 ];
 		then
-		Sinstall $2
+		Sinstall $1
+		else
+		Sinstall
+		fi
+	echo "Singularity successfully installed"
+	fi
+	exit
+	;;
+	"all-devel")
+# All-development branch setup, build, and install [sudo]
+	shift	
+	if [ "$(id -u)" != "0" ]; then
+	echo "Please run as root.[sudo]"
+	exit 1
+	else	
+	setup
+	Sclone devel
+		if [ $1 ];
+		then
+		Sinstall $1
 		else
 		Sinstall --prefix=/usr/local
 		fi
 	echo "Singularity successfully installed"
 	fi
+	exit
 	;;
-	"all-devel")
-# All-development branch setup, build, and install [sudo]
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root."
-	exit 1
-	else	
-	setup
-		if [ $2 ];
-		then
-		devel_Sinstall $2
-		else
-		devel_Sinstall --prefix=/usr/local
-		fi
-	echo "Singularity successfully installed"
-	fi
+        -*)
+            echo "Unknown option: ${1:-}"
+            exit 1
+        ;;
+	*)
+		break
 	;;
 esac
 done
