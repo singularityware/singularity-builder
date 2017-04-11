@@ -1,6 +1,6 @@
 #!/bin/bash
 #Singularity Builder
-#Singularity: containers for Linux http://singularity.lbl.gov/
+#Singularity: Application containers for Linux http://singularity.lbl.gov/
 
 if [ "$#" -lt 1 ];
 then
@@ -67,14 +67,14 @@ ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
                    	python3-pip >> /tmp/.install-log
 			;;
 		"Fedora")
-        	dnf update #> /tmp/.install-log
+        	dnf update > /tmp/.install-log
 		dnf -y group install 'Development Tools'
 		dnf -y install git \
                    	libtool \
                    	automake \
                    	autoconf \
                    	debootstrap \
-                   	python3-pip #>> /tmp/.install-log
+                   	python3-pip >> /tmp/.install-log
 			;;
 	esac
 	fi
@@ -90,6 +90,17 @@ rm $1/bin/singularity
 rm $1/bin/run-singularity
 rm $1/etc/bash_completion.d/singularity 
 rm $1/man/man1/singularity.1
+}
+
+Sinstall () {
+	cd /tmp && git clone http://www.github.com/singularityware/singularity 
+	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install 
+}
+
+
+devel_Sinstall () {
+	cd /tmp && git clone -b development http://www.github.com/singularityware/singularity 
+	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install
 }
 
 for arg in $@
@@ -113,14 +124,28 @@ case "$arg" in
 	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make
 	fi	
 	;;
+	"build-devel")
+# Build configure and make the installation, with optional --prefix
+	cd /tmp && git clone http://www.github.com/singularityware/singularity 
+	if [ $2 ];
+	then	
+	cd /tmp/singularity && ./autogen.sh && ./configure $2 && make
+	else	
+	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make
+	fi	
+	;;
 	"install")	
 # Install Singularity from Github
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
 	if [ "$(id -u)" != "0" ]; then
 	echo "Please run as root."
 	exit 1
-	else	
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
+	else
+		if [ $2 ];
+		then	
+		Sinstall $2
+		else	
+		Sinstall --prefix=/usr/local
+		fi		
 	echo "Singularity successfully installed"
 	fi
 	;;
@@ -133,22 +158,26 @@ case "$arg" in
 		if [ $2 ];
 		then
 		remove $2
+		Sinstall $2
 		else
 		remove /usr/local
+		Sinstall --prefix=/usr/local
 		fi
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 	echo "Singularity successfully installed"
 	fi
 	;;
 	"install-devel")	
 # Install Singularity-Development branch from Github
-	cd /tmp && git clone -b development http://www.github.com/singularityware/singularity 
 	if [ "$(id -u)" != "0" ]; then
 	echo "Please run as root."
 	exit 1
 	else	
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
+		if [ $2 ];
+		then	
+		devel_Sinstall $2
+		else
+		devel_Sinstall --prefix=/usr/local
+		fi
 	echo "Singularity successfully installed"
 	fi	
 	;;
@@ -161,11 +190,11 @@ case "$arg" in
 		if [ $2 ];
 		then
 		remove $2
+		devel_Sinstall $2
 		else
 		remove /usr/local
+		devel_Sinstall --prefix=/usr/local		
 		fi
-	cd /tmp && git clone -b development http://www.github.com/singularityware/singularity
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
 	echo "Singularity successfully installed"
 	fi
 	;;
@@ -176,14 +205,30 @@ case "$arg" in
 	exit 1
 	else	
 	setup
-	cd /tmp && git clone http://www.github.com/singularityware/singularity 
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install
+		if [ $2 ];
+		then
+		Sinstall $2
+		else
+		Sinstall --prefix=/usr/local
+		fi
 	echo "Singularity successfully installed"
 	fi
 	;;
-	"test")
-	remove /usr/local	
+	"all-devel")
+# All-development branch setup, build, and install [sudo]
+	if [ "$(id -u)" != "0" ]; then
+	echo "Please run as root."
+	exit 1
+	else	
+	setup
+		if [ $2 ];
+		then
+		devel_Sinstall $2
+		else
+		devel_Sinstall --prefix=/usr/local
+		fi
+	echo "Singularity successfully installed"
+	fi
 	;;
-
 esac
 done
