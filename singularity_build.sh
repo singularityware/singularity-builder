@@ -165,9 +165,11 @@ case ${1:-} in
 	exit 1
 	else
 		if [ $1 ];
-		then	
+		then
+		Sclone
 		Sinstall $1
-		else	
+		else
+		Sclone
 		Sinstall
 		fi		
 	echo "Singularity successfully installed"
