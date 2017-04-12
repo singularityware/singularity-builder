@@ -17,9 +17,8 @@ Support for Debian/Ubuntu, Centos/Fedora
 	- update	[sudo]
 
 ## DEVELOPMENT:
-
-   install-devel: equivalent to install, but using development branch 
-   update-devel  equivalent to update, but using development branch
+	- install-devel: equivalent to install, but using development branch 
+	- update-devel  equivalent to update, but using development branch
 
 ## Examples:
 
