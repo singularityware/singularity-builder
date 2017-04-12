@@ -15,7 +15,8 @@ Support for Debian/Ubuntu, Centos/Fedora
 	- build		configure and make the installation, with optional --prefix
 	- install	make, and make install [sudo]
 	- update	[sudo]
-
+### Options:
+	- --prefix=/my/path Set a PATH for Install different from default /usr/local
 ## DEVELOPMENT:
 	- install-devel: 	equivalent to install, but using development branch 
 	- update-devel  	equivalent to update, but using development branch
