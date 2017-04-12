@@ -11,6 +11,7 @@ compiler:
   
 before_install:
 - chmod +x singularity_build.sh
+- cat /etc/debian_version
 
 install:
 - sudo ./singularity_build.sh setup build
