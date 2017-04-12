@@ -10,11 +10,11 @@ Support for Debian/Ubuntu, Centos/Fedora
 ```
 
 ## COMMANDS:
-all       setup, build, and install [sudo]
-setup     install dependencies for your distribution [sudo]
-build     configure and make the installation, with optional --prefix
-install   make, and make install [sudo]
-update    [sudo]
+	- all		setup, build, and install [sudo]
+	- setup		install dependencies for your distribution [sudo]
+	- build		configure and make the installation, with optional --prefix
+	- install	make, and make install [sudo]
+	- update	[sudo]
 
 ## DEVELOPMENT:
 
