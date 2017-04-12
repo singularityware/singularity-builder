@@ -1,5 +1,5 @@
 # Singularity Builder 
-[![Build Status](https://travis-ci.org/ArangoGutierrez/singularity-builder?branch=master)](https://travis-ci.org/ArangoGutierrez/singularity-builder)
+[![Build Status](https://travis-ci.org/ArangoGutierrez/singularity-builder.svg?branch=master)](https://travis-ci.org/ArangoGutierrez/singularity-builder)
 
 
 This is a [packer](https://www.packer.io/docs/command-line/build.html) configuration to generate build instances (images) on different cloud platforms. 
