@@ -9,6 +9,9 @@ matrix:
 compiler:
   - gcc
   
+ before_install:
+- ls
+
 install:
 - sudo ./singularity_build.sh setup build
 
