@@ -17,8 +17,8 @@ Support for Debian/Ubuntu, Centos/Fedora
 	- update	[sudo]
 
 ## DEVELOPMENT:
-	- install-devel: equivalent to install, but using development branch 
-	- update-devel  equivalent to update, but using development branch
+	- install-devel: 	equivalent to install, but using development branch 
+	- update-devel  	equivalent to update, but using development branch
 
 ## Examples:
 
@@ -42,8 +42,9 @@ $ sudo ./singularity_build.sh build --prefix=/my/path
 Singularity: Application containers for Linux
 For additional help, see http://singularity.lbl.gov/
 
+## cloud platforms
 
-Also with this [packer](https://www.packer.io/docs/command-line/build.html) configuration to generate build instances (images) on different cloud platforms. 
+With this [packer](https://www.packer.io/docs/command-line/build.html) configuration you can generate build instances (images) on different cloud platforms. 
 
 
 	packer build builder.json 
