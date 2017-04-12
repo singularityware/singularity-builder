@@ -1,20 +1,10 @@
 language: cpp
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: required
-
-compiler:
-- gcc
+services:
+  - docker
   
 before_install:
 - chmod +x singularity_build.sh
-- cat /etc/debian_version
-
-install:
-- sudo ./singularity_build.sh setup build
 
 script:
-- sudo ./singularity_build.sh install
+- docker-compose up
