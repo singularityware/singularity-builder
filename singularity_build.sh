@@ -135,7 +135,7 @@ case ${1:-} in
 	else
 	setup
 	fi
-	shift 
+	shift
 	;;
 	"build")
 # Build configure and make the installation, with optional --prefix 
@@ -169,7 +169,8 @@ case ${1:-} in
 		Sinstall $1
 		else	
 		Sinstall
-		fi		
+		fi
+	singularity selftest		
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -189,6 +190,7 @@ case ${1:-} in
 		remove /usr/local
 		Sinstall
 		fi
+	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -208,6 +210,7 @@ case ${1:-} in
 		Sclone
 		Sinstall
 		fi
+	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -229,6 +232,7 @@ case ${1:-} in
 		Sclone
 		Sinstall	
 		fi
+	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -247,6 +251,7 @@ case ${1:-} in
 		else
 		Sinstall
 		fi
+	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -266,6 +271,7 @@ case ${1:-} in
 		else
 		Sinstall --prefix=/usr/local
 		fi
+	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
