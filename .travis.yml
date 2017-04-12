@@ -10,7 +10,7 @@ compiler:
   - gcc
   
 install:
-- ./singularity_build.sh setup build
+- sudo ./singularity_build.sh setup build
 
 script:
-- ./singularity_build.sh install
+- sudo ./singularity_build.sh install
