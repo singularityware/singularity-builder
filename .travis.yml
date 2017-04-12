@@ -1,0 +1,10 @@
+language: cpp
+
+services:
+  - docker
+  
+before_install:
+- chmod +x singularity_build.sh
+
+script:
+- docker-compose up

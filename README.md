@@ -1,5 +1,51 @@
-# Singularity Builder
-This is a [packer](https://www.packer.io/docs/command-line/build.html) configuration to generate build instances (images) on different cloud platforms. 
+# Singularity Builder 
+[![Build Status](https://travis-ci.org/ArangoGutierrez/singularity-builder.svg?branch=master)](https://travis-ci.org/ArangoGutierrez/singularity-builder)
+
+build, install, and update Singularity software. 
+Support for Debian/Ubuntu, Centos/Fedora
+
+## USAGE: 
+```
+./singularity_builder.sh <command> [options] ...
+```
+
+## COMMANDS:
+	- all		setup, build, and install [sudo]
+	- setup		install dependencies for your distribution [sudo]
+	- build		configure and make the installation, with optional --prefix
+	- install	make, and make install [sudo]
+	- update	[sudo]
+### Options:
+	- --prefix=/my/path Set a PATH for Install different from default /usr/local
+## DEVELOPMENT:
+	- install-devel: 	equivalent to install, but using development branch 
+	- update-devel  	equivalent to update, but using development branch
+
+## Examples:
+
+- Install dependencies, setup, build + install
+```bash
+ $ sudo ./singularity_build.sh all
+```
+- Build + optional prefix
+```bash
+$ sudo ./singularity_build.sh build --prefix=/my/path
+```
+- If you already have the needed dependencies, just install
+```bash
+  $ sudo ./singularity_build.sh install
+```
+- Update to the latest release
+```bash
+ sudo ./singularity_build.sh update
+```
+
+Singularity: Application containers for Linux
+For additional help, see http://singularity.lbl.gov/
+
+## cloud platforms
+
+With this [packer](https://www.packer.io/docs/command-line/build.html) configuration you can generate build instances (images) on different cloud platforms. 
 
 
 	packer build builder.json 
