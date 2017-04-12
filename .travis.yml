@@ -7,9 +7,9 @@ matrix:
       sudo: required
 
 compiler:
-  - gcc
+- gcc
   
- before_install:
+before_install:
 - ls
 
 install:
