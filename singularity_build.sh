@@ -45,7 +45,7 @@ fi
 setup () {
 ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 	if [ -f /etc/debian_version ]; then
-    	apt-get update > /tmp/.install-log
+    	apt-get -y update > /tmp/.install-log
 	apt-get install -y apt-utils >> /tmp/.install-log
 	apt-get -y install git \
                    build-essential \
@@ -61,7 +61,7 @@ ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
 	rhdist=$(cat /etc/redhat-release | awk '{print $1;}')
 		case "$rhdist" in
 		"CentOS")
-        	yum update > /tmp/.install-log
+        	yum -y update > /tmp/.install-log
 		yum -y group install 'Development Tools'
 		yum -y install git \
                    	libtool \
@@ -71,7 +71,7 @@ ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
                    	python3-pip >> /tmp/.install-log
 			;;
 		"Fedora")
-        	dnf update > /tmp/.install-log
+        	dnf -y update > /tmp/.install-log
 		dnf -y group install 'Development Tools'
 		dnf -y install git \
                    	libtool \
@@ -135,7 +135,6 @@ case ${1:-} in
 	else
 	setup
 	fi
-	break
 	;;
 	"build")
 # Build configure and make the installation, with optional --prefix 
@@ -165,15 +164,14 @@ case ${1:-} in
 	exit 1
 	else
 		if [ $1 ];
-		then
-		Sclone
+		then	
 		Sinstall $1
-		else
-		Sclone
+		else	
 		Sinstall
 		fi		
 	echo "Singularity successfully installed"
 	fi
+	exit
 	;;
 	"update")
 # Update Singularity from Github
@@ -184,7 +182,7 @@ case ${1:-} in
 	else
 		if [ $1 ];
 		then
-		remove $1
+		remove `echo "${1//--prefix=}"`
 		Sinstall $1
 		else
 		remove /usr/local
@@ -192,6 +190,7 @@ case ${1:-} in
 		fi
 	echo "Singularity successfully installed"
 	fi
+	exit
 	;;
 	"install-devel")	
 # Install Singularity-Development branch from Github
@@ -209,7 +208,8 @@ case ${1:-} in
 		Sinstall
 		fi
 	echo "Singularity successfully installed"
-	fi	
+	fi
+	exit
 	;;
 	"update-devel")
 # Update Singularity-Development branch from Github
@@ -220,7 +220,7 @@ case ${1:-} in
 	else
 		if [ $1 ];
 		then
-		remove $1
+		remove `echo "${1//--prefix=}"`
 		Sclone devel
 		Sinstall $1
 		else
@@ -230,6 +230,7 @@ case ${1:-} in
 		fi
 	echo "Singularity successfully installed"
 	fi
+	exit
 	;;
 	"all")
 # All setup, build, and install [sudo]
