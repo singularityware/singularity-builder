@@ -10,15 +10,15 @@ before_install:
 - docker pull centos
 
 install:
-	# Uncomment to test setup
+# Uncomment to test setup
 - docker run -i --name ubuntu -v $PWD:/home/build -w /home/build ubuntu ./singularity_build.sh setup
 - docker run -i --name centos -v $PWD:/home/build -w /home/build centos ./singularity_build.sh setup
-	# Uncomment to test all
+# Uncomment to test all
 - docker run -i --name ubuntu -v $PWD:/home/build -w /home/build ubuntu ./singularity_build.sh all
 - docker run -i --name centos -v $PWD:/home/build -w /home/build centos ./singularity_build.sh all
-	# Uncomment to test build only
+# Uncomment to test build only
 - docker run -i --name ubuntu -v $PWD:/home/build -w /home/build ubuntu ./singularity_build.sh setup build
 - docker run -i --name centos -v $PWD:/home/build -w /home/build centos ./singularity_build.sh setup build
-	# Uncomment to test Install only
+# Uncomment to test Install only
 - docker run -i --name ubuntu -v $PWD:/home/build -w /home/build ubuntu ./singularity_build.sh setup install
 - docker run -i --name centos -v $PWD:/home/build -w /home/build centos ./singularity_build.sh setup install
