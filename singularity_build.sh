@@ -135,7 +135,7 @@ case ${1:-} in
 	else
 	setup
 	fi
-	break 
+	shift 
 	;;
 	"build")
 # Build configure and make the installation, with optional --prefix 
