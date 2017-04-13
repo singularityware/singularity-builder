@@ -40,7 +40,7 @@ For additional help, see http://singularity.lbl.gov/"
 if [ "$#" -lt 1 ];
 then
 Shelp
-exit 1
+exit 0
 fi
 
 setup () {
@@ -173,7 +173,7 @@ case ${1:-} in
 		fi		
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"update")
 # Update Singularity from Github
@@ -234,7 +234,7 @@ case ${1:-} in
 	singularity selftest
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"all")
 # All setup, build, and install [sudo]

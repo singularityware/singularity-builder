@@ -55,40 +55,6 @@ message() {
 }
 
 
-singularity_key_get() {
-    KEY="${1:-}"
-    FILE="${2:-}"
-    if OUT=`egrep -i "^$KEY:" $FILE`; then
-        echo "$OUT" | head -n 1 | sed -e "s@^$KEY:\s*@@i" | sed -e "s@\s*#.*@@"
-        return 0
-    fi
-    return 1
-}
-
-
-ABORT() {
-    RETVAL="${1:-}"
-    if [ -z "$RETVAL" ]; then
-        RETVAL=1
-    fi
-    message ERROR "Aborting with RETVAL=$RETVAL\n"
-    exit $RETVAL
-}
-
-check_pattern() {
-    STRING="${1:-}"
-    PATTERN="${2:-}"
-    case "$PATTERN" in
-        $STRING)
-            true
-        ;;
-        *)
-            return 1
-        ;;
-    esac
-    return 0
-}
-
 cmd() {
     message 2 " + %-68.68s" "$*"
     "$@" >/dev/null 2>&1
@@ -191,12 +157,6 @@ parse_opts() {
     echo "$NEWOPTS" | sed -e 's/\\/\\\\/g'
 }
 
-
-
-
-if [ -n "${SHELL_DEBUG:-}" ]; then
-    set -x
-fi
 
 test_init() {
     if [ -z "${1:-}" ]; then
