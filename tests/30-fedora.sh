@@ -19,11 +19,4 @@ for i in $ALL_COMMANDS; do
     stest 0 docker run vanessa/fedora-builder "$i"
 done
 
-/bin/echo
-/bin/echo "Testing error on bad commands"
-
-
-stest 1 docker run vanessa/fedora-builder bogus
-stest 1 docker run vanessa/fedora-builder --help bogus
-
 test_cleanup
