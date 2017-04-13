@@ -169,8 +169,7 @@ case ${1:-} in
 		Sinstall $1
 		else	
 		Sinstall
-		fi
-	singularity selftest		
+		fi		
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -190,7 +189,6 @@ case ${1:-} in
 		remove /usr/local
 		Sinstall
 		fi
-	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
@@ -251,7 +249,6 @@ case ${1:-} in
 		else
 		Sinstall
 		fi
-	singularity selftest
 	echo "Singularity successfully installed"
 	fi
 	exit
