@@ -1,285 +1,277 @@
 #!/bin/bash
-#Singularity Builder
-#Singularity: Application containers for Linux http://singularity.lbl.gov/
+# Singularity Builder
+# Singularity: Application containers for Linux http://singularityware.github.io
 
 Shelp (){
+
 echo "Singularity Builder: build, install, and update Singularity software. 
 Support for Debian/Ubuntu, Centos/Fedora
 
 USAGE: ./singularity_builder.sh <command> [options] ...
 
 COMMANDS:
-     all        setup, build, and install [sudo]
-     setup     	install dependencies for your distribution [sudo]
-     build      configure and make the installation, with optional --prefix
-     install    make, and make install [sudo]
-     update 	[sudo]
+    all         setup, build, install [sudo]
+    setup       install dependencies for your distribution [sudo]
+    build       configure and make the installation, with optional --prefix and --sysconfdir
+    install     make, and make install [sudo]
+    update      update the installation [sudo]
 
-DEVELOPMENT:
-   install-devel: equivalent to install, but using development branch 
-   update-devel  equivalent to update, but using development branch
+
+OPTIONS
+    --prefix/-p  install to specified prefix.
+    --devel/-d   do specified commands for development version
+    --sysconfdir specify system config directory fot singularity.conf
 
 Examples:
 
-  # Install dependencies, setup, build + install
-  sudo ./singularity_build.sh all
+    # Install dependencies, setup, build + install
+    sudo ./singularity_build.sh all
 
-  # Build + optional prefix
-  sudo ./singularity_build.sh build --prefix=/my/path
+    # Build and make, specify install to /my/path
+    sudo ./singularity_build.sh build --prefix=/my/path
  
-  # If you already have the needed dependencies, just install
-  sudo ./singularity_build.sh install
+    # If you already have the needed dependencies, just install
+    sudo ./singularity_build.sh install
 
-  # Update to the latest release
-  sudo ./singularity_build.sh update
+    # Update to the latest release
+    sudo ./singularity_build.sh update
 
 Singularity: Application containers for Linux
-For additional help, see http://singularity.lbl.gov/"
+For additional help, see http://singularityware.github.io"
 }
 
-if [ "$#" -lt 1 ];
-then
-Shelp
-exit 0
+if [ "$#" -lt 1 ]; then
+    Shelp
+    exit 0
 fi
 
 setup () {
-ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
-	if [ -f /etc/debian_version ]; then
-    	apt-get -y update > /tmp/.install-log
-	apt-get install -y apt-utils >> /tmp/.install-log
-	apt-get -y install git \
-                   build-essential \
-                   libtool \
-                   autotools-dev \
-                   automake \
-                   autoconf \
-                   debootstrap \
-                   yum \
-                   python3-pip >> /tmp/.install-log
+    
+    ARCH=$(uname -m | sed 's/x86_//;s/i[3-6]86/32/')
+    if [ -f /etc/debian_version ]; then
+        apt-get -y update &&
+        apt-get install -y apt-utils &&
+        apt-get install -y git \
+                           build-essential \
+                           libtool \
+                           autotools-dev \
+                           automake \
+                           autoconf \
+                           debootstrap \
+                           yum \
+                           python3-pip 
 
-	elif [ -f /etc/redhat-release ]; then
-	rhdist=$(cat /etc/redhat-release | awk '{print $1;}')
-		case "$rhdist" in
-		"CentOS")
-        	yum -y update > /tmp/.install-log
-		yum -y group install 'Development Tools'
-		yum -y install git \
-                   	libtool \
-                   	automake make \
-                   	autoconf \
-                   	debootstrap \
-                   	python3-pip >> /tmp/.install-log
-			;;
-		"Fedora")
-        	dnf -y update > /tmp/.install-log
-		dnf -y group install 'Development Tools'
-		dnf -y install git \
-                   	libtool \
-                   	automake \
-                   	autoconf \
-                   	debootstrap \
-                   	python3-pip >> /tmp/.install-log
-			;;
-	esac
-	fi
+    elif [ -f /etc/redhat-release ]; then
+        rhdist=$(cat /etc/redhat-release | awk '{print $1;}')
+        case "$rhdist" in
+        
+            "CentOS")
+                yum -y update &&
+                yum -y group install 'Development Tools' &&
+                yum -y install git \
+                               libtool \
+                               automake make \
+                               autoconf \
+                               debootstrap \
+                               python3-pip
+                ;;
+        
+             "Fedora")
+                dnf -y update &&
+                dnf -y group install 'Development Tools' &&
+                dnf -y install git \
+                               libtool \
+                               automake \
+                               autoconf \
+                               debootstrap \
+                               python3-pip
+                ;;
+              esac
+    fi
+    echo "Successfully installed dependencies for Singularity"
 }
 
-remove () {
-rm -rf $1/libexec/singularity
-rm -rf $1/etc/singularity
-rm -rf $1/include/singularity
-rm -rf $1/lib/singularity
-rm -rf $1/var/lib/singularity/
-rm $1/bin/singularity
-rm $1/bin/run-singularity
-rm $1/etc/bash_completion.d/singularity 
+Sremove () {
+
+    if ! SINGULARITY_PATH=`singularity_which "singularity"`; then
+        echo "No Singularity Installations found."
+    else
+        SINGULARITY_INSTALL_PREFIX="${SINGULARITY_PATH/"/bin/singularity"/}"
+        echo "Found singularity at " $SINGULARITY_INSTALL_PREFIX      
+        rm -rf $SINGULARITY_INSTALL_PREFIX/libexec/singularity
+        rm -rf $SINGULARITY_INSTALL_PREFIX/etc/singularity
+        rm -rf $SINGULARITY_INSTALL_PREFIX/include/singularity
+        rm -rf $SINGULARITY_INSTALL_PREFIX/lib/singularity
+        rm -rf $SINGULARITY_INSTALL_PREFIX/var/lib/singularity/
+        rm $SINGULARITY_INSTALL_PREFIX/bin/singularity
+        rm $SINGULARITY_INSTALL_PREFIX/bin/run-singularity
+        rm $SINGULARITY_INSTALL_PREFIX/etc/bash_completion.d/singularity 
+    fi
 }
 
 Sclone () {
-	if [ "$1" == "devel" ]; 
-	then 
-	cd /tmp && git clone -b development http://www.github.com/singularityware/singularity 
-	else	
-	cd /tmp && git clone http://www.github.com/singularityware/singularity
-	fi
+    if [ "$BUILDER_DEVELOPMENT" = "True" ]; then 
+        cd /tmp && git clone -b development https://github.com/singularityware/singularity.git 
+        echo "Cloned development branch of singularity to $PWD"
+    else    
+        cd /tmp && git clone https://github.com/singularityware/singularity.git
+        echo "Cloned master branch of singularity to $PWD"
+    fi
 }
+
 Smake () {
-	if [ $1 ];
-	then
-	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make 
-	else 
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make 
-	fi
+
+    if [ -z ${BUILDER_SYSCONFIG_DIR+x} ]; then 
+        cd /tmp/singularity && ./autogen.sh && ./configure --prefix=$BUILDER_INSTALL_PREFIX && make  
+    else 
+        cd /tmp/singularity && ./autogen.sh && ./configure \
+                            --prefix=$BUILDER_INSTALL_PREFIX 
+                            --sysconfdir=$BUILDER_SYSCONFIG_DIR && make  
+    fi
+    echo "Singularity is configured at /tmp/singularity and will install to $BUILDER_INSTALL_PREFIX"
 }
 
 Sinstall () { 
-	if [ $1 ];
-	then
-	cd /tmp/singularity && ./autogen.sh && ./configure $1 && make && make install 
-	else 
-	cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make && make install 
-	fi
+    Smake && make install 
 }
 
+# Commands
+BUILDER_RUN_SETUP=False             # setup
+BUILDER_RUN_BUILD=False             # Sclone
+BUILDER_CLONE=False                 # Sclone Smake
+BUILDER_RUN_UPDATE=False            # remove Sinstall
+BUILDER_RUN_INSTALL=False            # remove Sinstall
+BUILDER_RUN_ALL=False               # remove S
+
+# Options
+BUILDER_INSTALL_PREFIX=/usr/local
+BUILDER_DEVELOPMENT=False
+
+# Step 1: Collect input arguments
+
 while true; do
-case ${1:-} in
-	-h|--help|help)
-	Shelp
-	exit 0
-	;;
-# Install dependencies for your distribution [sudo]
-	"setup")
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else
-	setup
-	fi
-	shift
-	;;
-	"build")
-# Build configure and make the installation, with optional --prefix 
-	Sclone	
-	shift
-	if [ $1 ]; then
-	Smake $1
-	else
-	Smake
-	fi
-	;;
-	"build-devel")
-# Build configure and make the installation, with optional --prefix
-	Sclone devel
-	shift
-	if [ $1 ]; then
-	Smake $1
-	else
-	Smake
-	fi
-	;;
-	"install")	
-# Install Singularity from Github
-	shift
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else
-		if [ $1 ];
-		then	
-		Sinstall $1
-		else	
-		Sinstall
-		fi		
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
-	"update")
-# Update Singularity from Github
-	shift
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else
-		if [ $1 ];
-		then
-		remove `echo "${1//--prefix=}"`
-		Sinstall $1
-		else
-		remove /usr/local
-		Sinstall
-		fi
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
-	"install-devel")	
-# Install Singularity-Development branch from Github
-	shift	
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else	
-		if [ $1 ];
-		then
-		Sclone	devel
-		Sinstall $1
-		else
-		Sclone devel
-		Sinstall
-		fi
-	singularity selftest
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
-	"update-devel")
-# Update Singularity-Development branch from Github
-	shift	
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else
-		if [ $1 ];
-		then
-		remove `echo "${1//--prefix=}"`
-		Sclone devel
-		Sinstall $1
-		else
-		remove /usr/local
-		Sclone devel
-		Sinstall	
-		fi
-	singularity selftest
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
-	"all")
-# All setup, build, and install [sudo]
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else	
-	setup
-	Sclone
-		if [ $1 ];
-		then
-		Sinstall $1
-		else
-		Sinstall
-		fi
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
-	"all-devel")
-# All-development branch setup, build, and install [sudo]
-	shift	
-	if [ "$(id -u)" != "0" ]; then
-	echo "Please run as root.[sudo]"
-	exit 1
-	else	
-	setup
-	Sclone devel
-		if [ $1 ];
-		then
-		Sinstall $1
-		else
-		Sinstall --prefix=/usr/local
-		fi
-	singularity selftest
-	echo "Singularity successfully installed"
-	fi
-	exit 0
-	;;
+    case ${1:-} in
+
+        -h|--help|help)
+            Shelp
+            exit 0
+        ;;
+    
+        "setup")
+
+            if [ "$(id -u)" != "0" ]; then
+                echo "Please run as root (sudo)"
+                exit 1
+            else
+                BUILDER_RUN_SETUP=True
+            fi
+            shift
+        ;;
+    
+
+        "build")
+            BUILDER_CLONE=True    
+            shift
+        ;;
+
+       
+        -d|--dev|--devel|dev|devel)
+            export BUILDER_DEVELOPMENT=True
+            shift
+         ;;
+
+        --sysconfdir)
+            shift
+            export BUILDER_SYSCONFIG_DIR="${1:-}"
+            shift
+         ;;
+
+        -p|--prefix|prefix)
+            shift
+            export BUILDER_INSTALL_PREFIX="${1:-}"
+            shift
+         ;;
+
+        "install")    
+            shift
+            if [ "$(id -u)" != "0" ]; then
+                echo "Please run as root (sudo)."
+                exit 1
+            else
+                BUILDER_RUN_INSTAll=True
+            fi
+         ;;
+
+
+        "update")
+            shift
+            if [ "$(id -u)" != "0" ]; then
+                echo "Please run as root (sudo)."
+                exit 1
+             else
+                 BUILDER_CLONE=True
+                 BUILDER_REMOVE=True
+                 BUILDER_RUN_UPDATE=True
+             fi
+         ;;
+        
+        "all")
+             shift
+             if [ "$(id -u)" != "0" ]; then
+                 echo "Please run as root (sudo)."
+                 exit 1
+             else    
+                 BUILDER_RUN_SETUP=True
+                 BUILDER_CLONE=True
+                 BUILDER_RUN_INSTALL=True
+         ;;
         -*)
             echo "Unknown option: ${1:-}"
             exit 1
         ;;
-	*)
-		break
-	;;
+    *)
+        break
+    ;;
 esac
 done
+
+if [ $BUILDER_CLONE = "True" ]; then
+    Sclone
+fi
+
+# Install and build are redundant
+if [ $BUILDER_RUN_INSTALL = "True" ]; then
+    BUILDER_RUN_BUILD=False
+fi
+
+
+if [ $BUILDER_RUN_UPDATE = "True" ]; then
+    Sremove
+    Sclone
+    Sinstall
+    echo "Finished update of Singularity"
+    exit 0
+fi
+
+
+if [ $BUILDER_RUN_ALL = "True" ]; then
+    setup
+    Sclone
+    Sinstall
+    echo "Finished setup, clone, and build, and install for Singularity"
+    exit 0
+fi
+
+if [ $BUILDER_RUN_SETUP = "True" ]; then
+    setup
+fi
+
+if [ $BUILDER_RUN_BUILD = "True" ]; then
+    Smake
+fi
+
+if [ $BUILDER_RUN_INSTALL = "True" ]; then
+    Sinstall
+fi
+
+exit 0
