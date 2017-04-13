@@ -16,13 +16,13 @@ stest 0 docker run vanessa/centos-builder --help
 for i in $ALL_COMMANDS; do
     echo
     echo "Testing command ./singularity_build.sh: '$i'"
-    stest 0 docker run --name latest vanessa/centos-builder "$i"
+    stest 0 docker run vanessa/centos-builder "$i"
 done
 
 for i in $ALL_COMMANDS; do
     echo
     echo "Testing command ./singularity_build.sh: '$i' --prefix=/opt/singularity"
-    stest 0 docker run --name prefix vanessa/centos-builder "$i" --prefix=/opt/singularity
+    stest 0 docker run vanessa/centos-builder "$i" --prefix=/opt/singularity
 done
 
 test_cleanup
