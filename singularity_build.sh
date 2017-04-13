@@ -207,7 +207,7 @@ case ${1:-} in
 		Sclone	devel
 		Sinstall $1
 		else
-		Sclone
+		Sclone devel
 		Sinstall
 		fi
 	singularity selftest
@@ -229,7 +229,7 @@ case ${1:-} in
 		Sinstall $1
 		else
 		remove /usr/local
-		Sclone
+		Sclone devel
 		Sinstall	
 		fi
 	singularity selftest

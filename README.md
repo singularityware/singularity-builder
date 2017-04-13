@@ -6,7 +6,7 @@ Support for Debian/Ubuntu, Centos/Fedora
 
 ## USAGE: 
 ```
-./singularity_builder.sh <command> [options] ...
+./singularity_build.sh <command> [options] ...
 ```
 
 ## COMMANDS:

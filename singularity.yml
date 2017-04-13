@@ -1,7 +1,0 @@
-# Ansible Singularity Playbook
-- name: Running ./singularity_build.sh 
-  	hosts: all
-	command: './singularity_build.sh "{{ item }}"'
-	sudo : yes
-	with_items:
-		- all
