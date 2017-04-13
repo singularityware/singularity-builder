@@ -19,12 +19,4 @@ for i in $ALL_COMMANDS; do
     stest 0 docker run vanessa/centos-builder "$i"
 done
 
-BUILD_COMMANDS="all build install update"
-
-for i in $BUILD_COMMANDS; do
-    echo
-    echo "Testing command ./singularity_build.sh: '$i' --prefix=/opt/singularity"
-    stest 0 docker run vanessa/centos-builder "$i" --prefix=/opt/singularity
-done
-
 test_cleanup
