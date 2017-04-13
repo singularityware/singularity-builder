@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# Copyright (c) 2017, Eduardo Arango. All rights reserved.
+#
 #Singularity Builder
 #Singularity: Application containers for Linux http://singularity.lbl.gov/
 
