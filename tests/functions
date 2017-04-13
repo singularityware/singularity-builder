@@ -17,8 +17,6 @@
 # to reproduce, distribute copies to the public, prepare derivative works, and
 # perform publicly and display publicly, and to permit other to do so.
 #
-#
-
 
 message() {
     LEVEL="${1:-}"
@@ -42,11 +40,6 @@ message() {
         1|INFO)
             if [ "$LEVEL" -le "$SINGULARITY_MESSAGELEVEL" ]; then
                 printf "$MESSAGE" "$@"
-            fi
-        ;;
-        [2-5]|VERBOSE|DEBUG)
-            if [ "$LEVEL" -le "$SINGULARITY_MESSAGELEVEL" ]; then
-                printf "$MESSAGE" "$@" 1>&2
             fi
         ;;
     esac
@@ -74,29 +67,6 @@ eval_abort() {
         exit $RETVAL
     fi
     return 0
-}
-
-stest() {
-    ERROR="${1:-}"
-    TMPFILE=`mktemp`
-    shift
-    message 2 " + %-80.80s " "$*"
-    "$@" >$TMPFILE 2>&1
-    CODE="$?"
-    if [ "$ERROR" = "0" -a "$CODE" != "0" ]; then
-        message 2 "%13s ERROR\n" "(retval=$CODE)"
-        tail "$TMPFILE"
-        echo "Full output in: $TMPFILE"
-        exit 1
-    elif [ "$ERROR" != "0" -a "$CODE" = "0" ]; then
-        message 2 "%13s ERROR\n" "(retval=$CODE)"
-        tail "$TMPFILE"
-        echo "Full output in: $TMPFILE"
-        exit 1
-    else
-        message 2 "%13s OK\n" "(retval=$CODE)"
-    fi
-    rm -f "$TMPFILE"
 }
 
 
@@ -219,4 +189,3 @@ stest() {
         message 2 "%13s OK\n" "(retval=$RETVAL)"
     fi
 }
-
