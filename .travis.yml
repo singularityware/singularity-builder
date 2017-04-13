@@ -24,4 +24,4 @@ before_install:
   - cd $TRAVIS_BUILD_DIR/tests/ubuntu && docker build -t vanessa/ubuntu-builder .
 
 script:
-  - cd $TRAVIS_BUILD_DIR && ./tesh.sh
+  - cd $TRAVIS_BUILD_DIR && ./test.sh
