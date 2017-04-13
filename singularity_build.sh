@@ -224,6 +224,7 @@ while true; do
                  BUILDER_RUN_SETUP=True
                  BUILDER_CLONE=True
                  BUILDER_RUN_INSTALL=True
+             fi
          ;;
         -*)
             echo "Unknown option: ${1:-}"
