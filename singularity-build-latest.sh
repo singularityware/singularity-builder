@@ -18,7 +18,6 @@ cd /tmp/singularity && ./autogen.sh && ./configure --prefix=/usr/local && make &
 sudo pip3 install --upgrade pip &&
 sudo pip3 install --upgrade google-api-python-client &&
 sudo pip3 install --upgrade google &&
-sudo pip3 install gitpython &&
 sudo pip3 install singularity --upgrade &&
 sudo pip3 install oauth2client==3.0.0
 
