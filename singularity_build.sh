@@ -35,11 +35,12 @@ Examples:
 
 Singularity: Application containers for Linux
 For additional help, see http://singularity.lbl.gov/"
-exit 1
 }
+
 if [ "$#" -lt 1 ];
 then
 Shelp
+exit 0
 fi
 
 setup () {
@@ -125,7 +126,7 @@ while true; do
 case ${1:-} in
 	-h|--help|help)
 	Shelp
-	exit
+	exit 0
 	;;
 # Install dependencies for your distribution [sudo]
 	"setup")
@@ -172,7 +173,7 @@ case ${1:-} in
 		fi		
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"update")
 # Update Singularity from Github
@@ -191,7 +192,7 @@ case ${1:-} in
 		fi
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"install-devel")	
 # Install Singularity-Development branch from Github
@@ -211,7 +212,7 @@ case ${1:-} in
 	singularity selftest
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"update-devel")
 # Update Singularity-Development branch from Github
@@ -233,7 +234,7 @@ case ${1:-} in
 	singularity selftest
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"all")
 # All setup, build, and install [sudo]
@@ -251,7 +252,7 @@ case ${1:-} in
 		fi
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
 	"all-devel")
 # All-development branch setup, build, and install [sudo]
@@ -271,7 +272,7 @@ case ${1:-} in
 	singularity selftest
 	echo "Singularity successfully installed"
 	fi
-	exit
+	exit 0
 	;;
         -*)
             echo "Unknown option: ${1:-}"

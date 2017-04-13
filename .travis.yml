@@ -6,5 +6,22 @@ services:
 before_install:
 - chmod +x singularity_build.sh
 
+sudo: true
+
+os: linux
+
+compiler:
+  - gcc
+
+before_install:
+  - sudo sed -i -e 's/^Defaults\tsecure_path.*$//' /etc/sudoers
+  - cd $TRAVIS_BUILD_DIR/
+  - cp singularity_build.sh tests/centos/build.sh
+  - cp singularity_build.sh tests/fedora/build.sh
+  - cp singularity_build.sh tests/ubuntu/build.sh
+  - cd $TRAVIS_BUILD_DIR/tests/centos && docker build -t vanessa/centos-builder .
+  - cd $TRAVIS_BUILD_DIR/tests/fedora && docker build -t vanessa/fedora-builder .
+  - cd $TRAVIS_BUILD_DIR/tests/ubuntu && docker build -t vanessa/ubuntu-builder .
+
 script:
-- docker-compose up
+  - cd $TRAVIS_BUILD_DIR && ./test.sh
