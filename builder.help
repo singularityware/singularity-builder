@@ -1,0 +1,29 @@
+Singularity Builder: build, install, and update Singularity software. 
+Support for Debian/Ubuntu, Centos/Fedora
+
+USAGE: ./singularity_builder.sh <command> [options] ...
+
+COMMANDS:
+     all        setup, build, and install [sudo]
+     setup     	install dependencies for your distribution [sudo]
+     build      configure and make the installation, with optional --prefix
+     install    make, and make install [sudo]
+     update 	[sudo]
+
+DEVELOPMENT:
+   install-devel: equivalent to install, but using development branch 
+   update-devel  equivalent to update, but using development branch
+
+Examples:
+
+  # Install dependencies, setup, build + install
+  sudo ./singularity_build.sh all
+ 
+  # If you already have dependencies, just install
+  sudo ./singularity_build.sh install
+
+  # Update an installation
+  sudo ./singularity_build.sh update
+
+Singularity: Application containers for Linux
+For additional help, see http://singularity.lbl.gov/

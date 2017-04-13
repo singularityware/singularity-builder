@@ -1,0 +1,14 @@
+version: '2'
+services:
+  ubuntu_ci:
+    build: 
+        context: .
+        dockerfile: ubuntu/Dockerfile
+  centos_ci:
+    build:
+        context: .
+        dockerfile: centos/Dockerfile
+  fedora_ci:
+    build:
+        context: .
+        dockerfile: fedora/Dockerfile
