@@ -176,19 +176,22 @@ while true; do
 
        
         -d|--dev|--devel|dev|devel)
-            export BUILDER_DEVELOPMENT=True
+            BUILDER_DEVELOPMENT=True
+            export BUILDER_DEVELOPMENT
             shift
          ;;
 
         --sysconfdir)
             shift
-            export BUILDER_SYSCONFIG_DIR="${1:-}"
+            BUILDER_SYSCONFIG_DIR="${1:-}"
+            export BUILDER_SYSCONFIG_DIR
             shift
          ;;
 
         -p|--prefix|prefix)
             shift
-            export BUILDER_INSTALL_PREFIX="${1:-}"
+            BUILDER_INSTALL_PREFIX="${1:-}"
+            export BUILDER_INSTALL_PREFIX
             shift
          ;;
 
@@ -198,7 +201,7 @@ while true; do
                 echo "Please run as root (sudo)."
                 exit 1
             else
-                BUILDER_RUN_INSTAll=True
+                BUILDER_RUN_INSTALL=True
             fi
          ;;
 
