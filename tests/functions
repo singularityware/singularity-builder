@@ -162,6 +162,7 @@ exit_cleanup() {
     return 0
 }
 
+
 stest() {
     ERROR="${1:-}"
     OUTPUT="$SINGULARITY_TESTDIR/output"
