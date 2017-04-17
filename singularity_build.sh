@@ -1,5 +1,6 @@
 #!/bin/bash
 # Singularity Builder
+# Copyright (c) 2017, Vanessa Sochat - Eduardo Arango. All rights reserved.
 # Singularity: Application containers for Linux http://singularityware.github.io
 
 Shelp (){
@@ -21,7 +22,7 @@ COMMANDS:
 OPTIONS
     --prefix/-p  install to specified prefix.
     --devel/-d   do specified commands for development version
-    --sysconfdir specify system config directory fot singularity.conf
+    --sysconfdir specify system config directory for singularity.conf
 
 Examples:
 

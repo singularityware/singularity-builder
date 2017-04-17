@@ -1,7 +1,7 @@
 # Singularity Builder 
 [![Build Status](https://travis-ci.org/ArangoGutierrez/singularity-builder.svg?branch=master)](https://travis-ci.org/ArangoGutierrez/singularity-builder)
 
-build, install, and update Singularity software. 
+build, install, and update Singularity container. 
 Support for Debian/Ubuntu, Centos/Fedora
 
 ## USAGE: 
@@ -15,11 +15,11 @@ Support for Debian/Ubuntu, Centos/Fedora
 	- build		configure and make the installation, with optional --prefix
 	- install	make, and make install [sudo]
 	- update	[sudo]
+	- clean		clean Singularity installations
 ### Options:
-	- --prefix=/my/path Set a PATH for Install different from default /usr/local
-## DEVELOPMENT:
-	- install-devel: 	equivalent to install, but using development branch 
-	- update-devel  	equivalent to update, but using development branch
+    --prefix/-p  install to specified prefix.
+    --devel/-d   do specified commands for development version
+    --sysconfdir specify system config directory for singularity.conf
 
 ## Examples:
 
@@ -38,6 +38,10 @@ $ sudo ./singularity_build.sh build --prefix=/my/path
 - Update to the latest release
 ```bash
  sudo ./singularity_build.sh update
+```
+- Clean Singularity installations from /my/path
+```bash
+ sudo ./singularity_build.sh clean --prefix /my/path
 ```
 
 Singularity: Application containers for Linux
