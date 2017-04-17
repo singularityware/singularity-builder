@@ -3,16 +3,17 @@
 # Singularity: Application containers for Linux http://singularityware.github.io
 
 Shelp (){
-
+echo " "
 echo "Singularity Builder: build, install, and update Singularity software. 
 Support for Debian/Ubuntu, Centos/Fedora
 
 USAGE: ./singularity_builder.sh <command> [options] ...
 
 COMMANDS:
+    clean	clean Singularity installations
     all         setup, build, install [sudo]
     setup       install dependencies for your distribution [sudo]
-    build       configure and make the installation, with optional --prefix and --sysconfdir
+    build       clone, configure and make the installation, with optional --prefix and --sysconfdir
     install     make, and make install [sudo]
     update      update the installation [sudo]
 
@@ -28,13 +29,16 @@ Examples:
     sudo ./singularity_build.sh all
 
     # Build and make, specify install to /my/path
-    sudo ./singularity_build.sh build --prefix=/my/path
+    sudo ./singularity_build.sh build --prefix /my/path
  
     # If you already have the needed dependencies, just install
     sudo ./singularity_build.sh install
 
     # Update to the latest release
     sudo ./singularity_build.sh update
+
+    # Clean Singularity installations from /my/path
+    sudo ./singularity_build.sh clean --prefix /my/path
 
 Singularity: Application containers for Linux
 For additional help, see http://singularityware.github.io"
@@ -93,11 +97,11 @@ setup () {
 
 Sremove () {
 
-    if ! SINGULARITY_PATH=`singularity_which "singularity"`; then
+    if [ -z 'whereis singularity | sed -e 's/singularity://g'' ]; then
         echo "No Singularity Installations found."
     else
-        SINGULARITY_INSTALL_PREFIX="${SINGULARITY_PATH/"/bin/singularity"/}"
-        echo "Found singularity at " $SINGULARITY_INSTALL_PREFIX      
+        SINGULARITY_INSTALL_PREFIX="$BUILDER_INSTALL_PREFIX"
+        echo "Found and clean singularity at " $SINGULARITY_INSTALL_PREFIX      
         rm -rf $SINGULARITY_INSTALL_PREFIX/libexec/singularity
         rm -rf $SINGULARITY_INSTALL_PREFIX/etc/singularity
         rm -rf $SINGULARITY_INSTALL_PREFIX/include/singularity
@@ -122,7 +126,7 @@ Sclone () {
 Smake () {
 
     if [ -z ${BUILDER_SYSCONFIG_DIR+x} ]; then 
-        cd /tmp/singularity && ./autogen.sh && ./configure --prefix=$BUILDER_INSTALL_PREFIX && make  
+        cd /tmp/singularity && ./autogen.sh && ./configure --prefix=$BUILDER_INSTALL_PREFIX && make 
     else 
         cd /tmp/singularity && ./autogen.sh && ./configure \
                             --prefix=$BUILDER_INSTALL_PREFIX 
@@ -132,17 +136,19 @@ Smake () {
 }
 
 Sinstall () { 
-    Smake && make install 
+    Smake && make install
+	SINGULARITY_VERSION=`singularity --version`
+	echo "Successfully installed  Singularity $SINGULARITY_VERSION"
 }
 
 # Commands
-BUILDER_RUN_SETUP=False             # setup
-BUILDER_RUN_BUILD=False             # Sclone
-BUILDER_CLONE=False                 # Sclone Smake
-BUILDER_RUN_UPDATE=False            # remove Sinstall
-BUILDER_RUN_INSTALL=False            # remove Sinstall
-BUILDER_RUN_ALL=False               # remove S
-
+BUILDER_RUN_SETUP=False         # setup
+BUILDER_RUN_BUILD=False         # Sclone
+BUILDER_CLONE=False             # Sclone Smake
+BUILDER_RUN_UPDATE=False        # remove Sinstall
+BUILDER_RUN_INSTALL=False       # remove Sinstall
+BUILDER_RUN_ALL=False           # remove S
+BUILDER_CLEAN=False		# Clean S
 # Options
 BUILDER_INSTALL_PREFIX=/usr/local
 BUILDER_DEVELOPMENT=False
@@ -156,7 +162,12 @@ while true; do
             Shelp
             exit 0
         ;;
-    
+
+        "clean")
+            BUILDER_CLEAN=True    
+            shift
+        ;;    
+
         "setup")
 
             if [ "$(id -u)" != "0" ]; then
@@ -167,10 +178,10 @@ while true; do
             fi
             shift
         ;;
-    
 
         "build")
-            BUILDER_CLONE=True    
+            BUILDER_CLONE=True
+	    BUILDER_RUN_BUILD=True    
             shift
         ;;
 
@@ -239,15 +250,30 @@ while true; do
 esac
 done
 
+if [ $BUILDER_CLEAN = "True" ]; then
+    Sremove
+fi
+
+if [ $BUILDER_RUN_SETUP = "True" ]; then
+    setup
+fi
+
 if [ $BUILDER_CLONE = "True" ]; then
     Sclone
 fi
 
-# Install and build are redundant
-if [ $BUILDER_RUN_INSTALL = "True" ]; then
-    BUILDER_RUN_BUILD=False
+if [ $BUILDER_RUN_BUILD = "True" ]; then
+    Smake
 fi
 
+if [ $BUILDER_RUN_INSTALL = "True" ]; then
+	if [ -f /tmp/singularity ]; then    
+		Sinstall
+		else
+		Sclone
+		Sinstall
+		fi
+fi
 
 if [ $BUILDER_RUN_UPDATE = "True" ]; then
     Sremove
@@ -257,25 +283,12 @@ if [ $BUILDER_RUN_UPDATE = "True" ]; then
     exit 0
 fi
 
-
 if [ $BUILDER_RUN_ALL = "True" ]; then
     setup
     Sclone
     Sinstall
     echo "Finished setup, clone, and build, and install for Singularity"
     exit 0
-fi
-
-if [ $BUILDER_RUN_SETUP = "True" ]; then
-    setup
-fi
-
-if [ $BUILDER_RUN_BUILD = "True" ]; then
-    Smake
-fi
-
-if [ $BUILDER_RUN_INSTALL = "True" ]; then
-    Sinstall
 fi
 
 exit 0
