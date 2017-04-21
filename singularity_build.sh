@@ -142,14 +142,6 @@ Sinstall () {
 	echo "Successfully installed  Singularity $SINGULARITY_VERSION"
 }
 
-# Commands
-BUILDER_RUN_SETUP=False         # setup
-BUILDER_RUN_BUILD=False         # Sclone
-BUILDER_CLONE=False             # Sclone Smake
-BUILDER_RUN_UPDATE=False        # remove Sinstall
-BUILDER_RUN_INSTALL=False       # remove Sinstall
-BUILDER_RUN_ALL=False           # remove S
-BUILDER_CLEAN=False		# Clean S
 # Options
 BUILDER_INSTALL_PREFIX=/usr/local
 BUILDER_DEVELOPMENT=False
@@ -165,7 +157,7 @@ while true; do
         ;;
 
         "clean")
-            BUILDER_CLEAN=True    
+            BUILDER_CLEAN="True"    
             shift
         ;;    
 
@@ -175,20 +167,20 @@ while true; do
                 echo "Please run as root (sudo)"
                 exit 1
             else
-                BUILDER_RUN_SETUP=True
+                BUILDER_RUN_SETUP="True"
             fi
             shift
         ;;
 
         "build")
-            BUILDER_CLONE=True
-	    BUILDER_RUN_BUILD=True    
+            BUILDER_CLONE="True"
+	    BUILDER_RUN_BUILD="True"    
             shift
         ;;
 
        
         -d|--dev|--devel|dev|devel)
-            BUILDER_DEVELOPMENT=True
+            BUILDER_DEVELOPMENT="True"
             export BUILDER_DEVELOPMENT
             shift
          ;;
@@ -251,23 +243,23 @@ while true; do
 esac
 done
 
-if [ $BUILDER_CLEAN = "True" ]; then
+if [ -n "${BUILDER_CLEAN:-}" ]; then
     Sremove
 fi
 
-if [ $BUILDER_RUN_SETUP = "True" ]; then
+if [ -n "${BUILDER_RUN_SETUP:-}" ]; then
     setup
 fi
 
-if [ $BUILDER_CLONE = "True" ]; then
+if [ -n "${BUILDER_CLONE:-}" ]; then
     Sclone
 fi
 
-if [ $BUILDER_RUN_BUILD = "True" ]; then
+if [ -n "${BUILDER_RUN_BUILD:-}" ]; then
     Smake
 fi
 
-if [ $BUILDER_RUN_INSTALL = "True" ]; then
+if [ -n "${BUILDER_RUN_INSTALL:-}" ]; then
 	if [ -f /tmp/singularity ]; then    
 		Sinstall
 		else
@@ -276,7 +268,7 @@ if [ $BUILDER_RUN_INSTALL = "True" ]; then
 		fi
 fi
 
-if [ $BUILDER_RUN_UPDATE = "True" ]; then
+if [ -n "${BUILDER_RUN_UPDATE:-}" ]; then
     Sremove
     Sclone
     Sinstall
@@ -284,7 +276,7 @@ if [ $BUILDER_RUN_UPDATE = "True" ]; then
     exit 0
 fi
 
-if [ $BUILDER_RUN_ALL = "True" ]; then
+if [ -n "${BUILDER_RUN_ALL:-}" ]; then
     setup
     Sclone
     Sinstall
