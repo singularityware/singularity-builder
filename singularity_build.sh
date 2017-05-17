@@ -5,7 +5,7 @@
 
 Shelp (){
 echo " "
-echo "Singularity Builder: build, install, and update Singularity software. 
+echo "Singularity Build: build, install, and update Singularity software. 
 Support for Debian/Ubuntu, Centos/Fedora
 
 USAGE: ./singularity_builder.sh <command> [options] ...
