@@ -24,6 +24,7 @@ for i in $ALL_COMMANDS; do
     echo "Testing command ./singularity_build.sh: '$i' --devel"
     stest 0 docker run --rm --name=ubuntu ashael/ubuntu-builder "$i --devel"
 done
+	echo
 	echo "Testing command make test for devel branch"
 	stest 0 docker run --privileged --rm --name=ubuntu ashael/ubuntu-builder all test --devel
 

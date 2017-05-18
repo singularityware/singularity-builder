@@ -24,8 +24,8 @@ for i in $ALL_COMMANDS; do
     echo "Testing command ./singularity_build.sh: '$i'"
     stest 0 docker run ashael/fedora-builder "$i --devel"
 done
-
-	echo ""
+	echo
+	echo "Testing command make test for devel branch"
 	stest 0 docker run --privileged --rm --name=fedora ashael/fedora-builder all test --devel
 	
 test_cleanup
