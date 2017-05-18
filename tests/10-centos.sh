@@ -26,7 +26,9 @@ for i in $ALL_COMMANDS; do
     stest 0 docker run --rm --name=centos ashael/centos-builder "$i --devel"
 done
 
-    stest 0 docker run --privileged --rm --name=centos ashael/centos-builder all test --devel
+	echo
+	echo "Testing command make test for devel branch"
+    	stest 0 docker run --privileged --rm --name=centos ashael/centos-builder all test --devel
 
 test_cleanup
 #END OF FILE!
