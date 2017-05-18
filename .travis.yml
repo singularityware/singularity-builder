@@ -19,9 +19,9 @@ before_install:
   - cp singularity_build.sh tests/centos/build.sh
   - cp singularity_build.sh tests/fedora/build.sh
   - cp singularity_build.sh tests/ubuntu/build.sh
-  - cd $TRAVIS_BUILD_DIR/tests/centos && docker build -t vanessa/centos-builder .
-  - cd $TRAVIS_BUILD_DIR/tests/fedora && docker build -t vanessa/fedora-builder .
-  - cd $TRAVIS_BUILD_DIR/tests/ubuntu && docker build -t vanessa/ubuntu-builder .
+  - cd $TRAVIS_BUILD_DIR/tests/centos && docker build -t ashael/centos-builder .
+  - cd $TRAVIS_BUILD_DIR/tests/fedora && docker build -t ashael/fedora-builder .
+  - cd $TRAVIS_BUILD_DIR/tests/ubuntu && docker build -t ashael/ubuntu-builder .
 
 script:
   - cd $TRAVIS_BUILD_DIR && ./test.sh

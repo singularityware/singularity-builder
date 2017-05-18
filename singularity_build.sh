@@ -17,7 +17,7 @@ COMMANDS:
     build       clone, configure and make the installation, with optional --prefix and --sysconfdir
     install     make, and make install [sudo]
     update      update the installation [sudo]
-
+    test	make test
 
 OPTIONS
     --prefix/-p  install to specified prefix.
@@ -56,7 +56,7 @@ setup () {
     if [ -f /etc/debian_version ]; then
         apt-get -y update &&
         apt-get install -y apt-utils &&
-        apt-get install -y git \
+        apt-get install -y git wget \
                            build-essential \
                            libtool \
                            autotools-dev \
@@ -73,7 +73,7 @@ setup () {
             "CentOS")
                 yum -y update &&
                 yum -y group install 'Development Tools' &&
-                yum -y install git \
+                yum -y install git wget \
                                libtool \
                                automake make \
                                autoconf \
@@ -84,7 +84,7 @@ setup () {
              "Fedora")
                 dnf -y update &&
                 dnf -y group install 'Development Tools' &&
-                dnf -y install git \
+                dnf -y install git wget \
                                libtool \
                                automake \
                                autoconf \
@@ -136,6 +136,18 @@ Smake () {
     echo "Singularity is configured at /tmp/singularity and will install to $BUILDER_INSTALL_PREFIX"
 }
 
+Smake_test () {
+            if [ "$(id -u)" != "0" ]; then
+                echo "Please run as root (sudo)"
+                exit 1
+            else
+               wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz"
+	       tar xvzf flawfinder-*.tar.gz
+	       make prefix=/usr install
+            fi
+	    cd /tmp/singularity && make test
+}
+
 Sinstall () { 
     Smake && make install
 	SINGULARITY_VERSION=`singularity --version`
@@ -178,7 +190,11 @@ while true; do
             shift
         ;;
 
-       
+        "test")
+            BUILDER_TEST="True"
+            shift
+        ;;
+
         -d|--dev|--devel|dev|devel)
             BUILDER_DEVELOPMENT="True"
             export BUILDER_DEVELOPMENT
@@ -284,4 +300,9 @@ if [ -n "${BUILDER_RUN_ALL:-}" ]; then
     exit 0
 fi
 
+if [ -n "${BUILDER_TEST:-}" ]; then
+    Smake_test
+fi
+
 exit 0
+# END OF FILE!
