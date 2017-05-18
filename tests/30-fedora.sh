@@ -26,7 +26,7 @@ for i in $ALL_COMMANDS; do
 done
 
 	echo ""
-	stest 0 docker run --rm --name=fedora ashael/fedora-builder all test --devel
+	stest 0 docker run --privileged --rm --name=fedora ashael/fedora-builder all test --devel
 	
 test_cleanup
 #END OF FILE!

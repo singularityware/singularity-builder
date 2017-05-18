@@ -25,7 +25,7 @@ for i in $ALL_COMMANDS; do
     stest 0 docker run --rm --name=ubuntu ashael/ubuntu-builder "$i --devel"
 done
 	echo "Testing command make test for devel branch"
-	stest 0 docker run --rm --name=ubuntu ashael/ubuntu-builder all test --devel
+	stest 0 docker run --privileged --rm --name=ubuntu ashael/ubuntu-builder all test --devel
 
 test_cleanup
 #END OF FILE!
