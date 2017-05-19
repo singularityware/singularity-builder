@@ -147,18 +147,10 @@ Smake_test () {
                 echo "Please run as root (sudo)"
                 exit 1
             else
-<<<<<<< HEAD
         	cd /tmp && wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz" 
 		cd flawfinder-1.31 && make prefix=/usr install
-        	cd /tmp/singularity && make test >> /tmp/singularity_test.log
-            fi	 
-=======
-               wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz"
-	       tar xvzf flawfinder-*.tar.gz
-	       make prefix=/usr install
             fi
 	    cd /tmp/singularity && make test
->>>>>>> 5cf6fc0b8420837e77e1533876443d42bf48b2d8
 }
 
 Sinstall () { 
