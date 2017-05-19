@@ -17,6 +17,8 @@ COMMANDS:
     build       clone, configure and make the installation, with optional --prefix and --sysconfdir
     install     make, and make install [sudo]
     update      update the installation [sudo]
+    test      	make test
+
 
 
 OPTIONS
@@ -136,6 +138,17 @@ Smake () {
     echo "Singularity is configured at /tmp/singularity and will install to $BUILDER_INSTALL_PREFIX"
 }
 
+Smake_test () {
+            if [ "$(id -u)" != "0" ]; then
+                echo "Please run as root (sudo)"
+                exit 1
+            else
+        	cd /tmp && wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz" 
+		cd flawfinder-1.31 && make prefix=/usr install
+        	cd /tmp/singularity && make test >> /tmp/singularity_test.log
+            fi	 
+}
+
 Sinstall () { 
     Smake && make install
 	SINGULARITY_VERSION=`singularity --version`
@@ -177,8 +190,11 @@ while true; do
 	    BUILDER_RUN_BUILD="True"    
             shift
         ;;
-
-       
+        "test")
+   
+            shift
+        ;;
+    
         -d|--dev|--devel|dev|devel)
             BUILDER_DEVELOPMENT="True"
             export BUILDER_DEVELOPMENT
@@ -257,6 +273,10 @@ fi
 
 if [ -n "${BUILDER_RUN_BUILD:-}" ]; then
     Smake
+fi
+
+if [ -n "${BUILDER_TEST:-}" ]; then
+    Smake_test
 fi
 
 if [ -n "${BUILDER_RUN_INSTALL:-}" ]; then

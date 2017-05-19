@@ -16,6 +16,7 @@ Support for Debian/Ubuntu, Centos/Fedora
 	- install	make, and make install [sudo]
 	- update	[sudo]
 	- clean		clean Singularity installations
+	- test		run `make test`
 ### Options:
     --prefix/-p  install to specified prefix.
     --devel/-d   do specified commands for development version
