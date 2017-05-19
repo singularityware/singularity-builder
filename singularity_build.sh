@@ -5,7 +5,7 @@
 
 Shelp (){
 echo " "
-echo "Singularity Builder: build, install, and update Singularity software. 
+echo "Singularity Build: build, install, and update Singularity software. 
 Support for Debian/Ubuntu, Centos/Fedora
 
 USAGE: ./singularity_builder.sh <command> [options] ...
@@ -17,9 +17,13 @@ COMMANDS:
     build       clone, configure and make the installation, with optional --prefix and --sysconfdir
     install     make, and make install [sudo]
     update      update the installation [sudo]
+<<<<<<< HEAD
     test      	make test
 
 
+=======
+    test	make test
+>>>>>>> 5cf6fc0b8420837e77e1533876443d42bf48b2d8
 
 OPTIONS
     --prefix/-p  install to specified prefix.
@@ -58,7 +62,7 @@ setup () {
     if [ -f /etc/debian_version ]; then
         apt-get -y update &&
         apt-get install -y apt-utils &&
-        apt-get install -y git \
+        apt-get install -y git wget \
                            build-essential \
                            libtool \
                            autotools-dev \
@@ -75,7 +79,7 @@ setup () {
             "CentOS")
                 yum -y update &&
                 yum -y group install 'Development Tools' &&
-                yum -y install git \
+                yum -y install git wget \
                                libtool \
                                automake make \
                                autoconf \
@@ -86,7 +90,7 @@ setup () {
              "Fedora")
                 dnf -y update &&
                 dnf -y group install 'Development Tools' &&
-                dnf -y install git \
+                dnf -y install git wget \
                                libtool \
                                automake \
                                autoconf \
@@ -143,10 +147,18 @@ Smake_test () {
                 echo "Please run as root (sudo)"
                 exit 1
             else
+<<<<<<< HEAD
         	cd /tmp && wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz" 
 		cd flawfinder-1.31 && make prefix=/usr install
         	cd /tmp/singularity && make test >> /tmp/singularity_test.log
             fi	 
+=======
+               wget "https://www.dwheeler.com/flawfinder/flawfinder-1.31.tar.gz"
+	       tar xvzf flawfinder-*.tar.gz
+	       make prefix=/usr install
+            fi
+	    cd /tmp/singularity && make test
+>>>>>>> 5cf6fc0b8420837e77e1533876443d42bf48b2d8
 }
 
 Sinstall () { 
@@ -190,11 +202,20 @@ while true; do
 	    BUILDER_RUN_BUILD="True"    
             shift
         ;;
+<<<<<<< HEAD
         "test")
    
             shift
         ;;
     
+=======
+
+        "test")
+            BUILDER_TEST="True"
+            shift
+        ;;
+
+>>>>>>> 5cf6fc0b8420837e77e1533876443d42bf48b2d8
         -d|--dev|--devel|dev|devel)
             BUILDER_DEVELOPMENT="True"
             export BUILDER_DEVELOPMENT
@@ -304,4 +325,9 @@ if [ -n "${BUILDER_RUN_ALL:-}" ]; then
     exit 0
 fi
 
+if [ -n "${BUILDER_TEST:-}" ]; then
+    Smake_test
+fi
+
 exit 0
+# END OF FILE!
