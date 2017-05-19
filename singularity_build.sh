@@ -194,20 +194,12 @@ while true; do
 	    BUILDER_RUN_BUILD="True"    
             shift
         ;;
-<<<<<<< HEAD
-        "test")
-   
-            shift
-        ;;
-    
-=======
 
         "test")
             BUILDER_TEST="True"
             shift
         ;;
 
->>>>>>> 5cf6fc0b8420837e77e1533876443d42bf48b2d8
         -d|--dev|--devel|dev|devel)
             BUILDER_DEVELOPMENT="True"
             export BUILDER_DEVELOPMENT
